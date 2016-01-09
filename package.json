@@ -1,0 +1,28 @@
+{
+  "name": "promise-sugar",
+  "version": "1.0.0",
+  "description": "Write promise chains without \".then\"",
+  "main": "promise-sugar.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duzun/promise-sugar.git"
+  },
+  "keywords": [
+    "Promise",
+    "function",
+    "short",
+    "syntax",
+    "sugar",
+    "lisp",
+    "no-then"
+  ],
+  "author": "Dumitru Uzun <contanct@duzun.me> (https://DUzun.Me)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/duzun/promise-sugar/issues"
+  },
+  "homepage": "https://github.com/duzun/promise-sugar#readme"
+}
