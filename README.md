@@ -3,7 +3,7 @@
 
 ## What it does?
 
-It alow you to convert this 
+It allows you to convert this 
 
 ```js
 Promise.resolve(10)
