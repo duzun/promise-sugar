@@ -4,6 +4,7 @@
   "description": "Write promise chains without \".then\"",
   "main": "promise-sugar.js",
   "scripts": {
+    "verup": "verup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,5 +25,13 @@
   "bugs": {
     "url": "https://github.com/duzun/promise-sugar/issues"
   },
-  "homepage": "https://github.com/duzun/promise-sugar#readme"
+  "homepage": "https://github.com/duzun/promise-sugar#readme",
+  "verup": {
+    "files": [
+      "promise-sugar.js"
+    ]
+  },
+  "devDependencies": {
+    "verup": "^1.3"
+  }
 }
