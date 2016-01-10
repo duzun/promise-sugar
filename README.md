@@ -16,6 +16,7 @@ Promise.resolve(10)
     return n * 3
 })
 .then(console.log.bind(console)) // -> 15
+.catch(console.error.bind(console))
 ```
 
 into this
@@ -28,13 +29,34 @@ sweeten(10)
 (function(n){
     return n * 3
 })
-(console.log.bind(console)) // -> 15
+(console.log.bind(console), console.error.bind(console)) // -> 15
+(null, console.error.bind(console)) // .catch
 ```
 
 That's it!
 
 
 You can play with it on [jsFiddle](https://jsfiddle.net/duzun/e5k8gppL/13/)
+
+
+## Install
+
+- Copy `promise-sugar.js` to your project or install it using npm:
+
+```sh
+npm install promise-sugar --save
+```
+
+- Add `promise-sugar.js` to your app using require (AMD or CommonJs) or as a script tag.
+```js
+var sweeten = require('promise-sugar');
+```
+
+- Make sure there is a `Promise` implementation or get a polyfill like [es6-promise](https://www.npmjs.com/package/es6-promise).
+
+```js
+sweeten.usePromise(require('es6-promise').Promise); // polyfill
+```
 
 
 ## Examples

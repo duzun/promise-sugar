@@ -2,15 +2,17 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.0.1
+ *  @version 1.0.2
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
  */
+
 /*global Promise */
 ;(function (name, global) {
     var undefined
-    ,   UNDEFINED = undefined + NIL
+    ,   UNDEFINED = undefined + ''
+    ,   VERSION = '1.0.2'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -19,6 +21,8 @@
         : define // AMD
     )
     /*define*/([], function factory() {
+        // -------------------------------------------------------------
+        var Promise = global.Promise;
         // -------------------------------------------------------------
 
         function sweeten(p) {
@@ -55,6 +59,15 @@
         sweeten.all     = function (val) { return sweeten(Promise.all(val)); };
         sweeten.race    = function (val) { return sweeten(Promise.race(val)); };
 
+        // -------------------------------------------------------------
+        // Use a custom Promise implementation
+        function usePromise(PromiseConstructor) {
+            Promise = PromiseConstructor;
+        }
+
+        // -------------------------------------------------------------
+        sweeten.usePromise = usePromise;
+        sweeten.VERSION = VERSION;
         // -------------------------------------------------------------
         return sweeten;
     });
