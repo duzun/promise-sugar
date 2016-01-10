@@ -41,7 +41,7 @@ You can play with it on [jsFiddle](https://jsfiddle.net/duzun/e5k8gppL/13/)
 
 ## Install
 
-- Copy `promise-sugar.js` to your project or install it using npm:
+- Copy `promise-sugar.js` to your project or install it using [npm](https://www.npmjs.com/package/promise-sugar):
 
 ```sh
 npm install promise-sugar --save
