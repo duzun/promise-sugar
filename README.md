@@ -36,7 +36,7 @@ sweeten(10)
 That's it!
 
 
-You can play with it on [jsFiddle](https://jsfiddle.net/duzun/e5k8gppL/13/)
+You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
 
 
 ## Install
