@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.0.2
+ *  @version 1.1.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -12,7 +12,7 @@
 ;(function (name, global) {
     var undefined
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.0.2'
+    ,   VERSION = '1.1.0'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -27,7 +27,7 @@
 
         function sweeten(p) {
             // new Promise(p) - [[Construct]]
-            if ( typeof p == 'function' ) {
+            if ( this instanceof sweeten ) {
                 return sweeten(new Promise(p));
             }
 
@@ -38,22 +38,51 @@
 
             then.then = then;
 
-            // then.__proto__ = Promise.prototype; // not sure this is a good idea
+            var PromisePrototype = Promise.prototype;
+
+            // then.__proto__ = PromisePrototype; // not sure this is a good idea
 
             // an alternative to setting then.__proto__:
             then.constructor = Promise;
-            then.catch = Promise.prototype.catch; // some sugar
-            // then.catch = function (reject) { return this.then(undefined, reject); }
+
+            // Promise/A+
+            then.catch   = 'catch'   in PromisePrototype ? PromisePrototype.catch   : _catch  ;
+
+            // Q
+            then.finally = 'finally' in PromisePrototype ? PromisePrototype.finally : _finally;
+
+            if ( 'progress' in PromisePrototype ) {
+                then.progress = PromisePrototype.progress;
+            }
 
             return then;
 
-            function then(onResolve, onReject) {
-                return sweeten(p.then(onResolve, onReject));
+            function then(onResolve, onReject, onNotify) {
+                return sweeten(p.then.apply(p, arguments));
             }
         }
 
         // -------------------------------------------------------------
+        function _catch(reject) {
+            return this.then(undefined, reject);
+        }
+
+        function _finally(callback) {
+            return this.then(
+                function(value) {
+                    return resolver().then(function() { return value; });
+                },
+                function(reason) {
+                    return resolver().then(function() { throw reason; });
+                }
+            );
+            function resolver() {
+                return sweeten.resolve(callback());
+            }
+        }
+        // -------------------------------------------------------------
         // Some more sugar:
+        sweeten.when    = sweeten;
         sweeten.resolve = function (val) { return sweeten(Promise.resolve(val)); };
         sweeten.reject  = function (val) { return sweeten(Promise.reject(val)); };
         sweeten.all     = function (val) { return sweeten(Promise.all(val)); };
