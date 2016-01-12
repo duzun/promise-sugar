@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.1.0
+ *  @version 1.1.1
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -12,7 +12,7 @@
 ;(function (name, global) {
     var undefined
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.1.0'
+    ,   VERSION = '1.1.1'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -81,13 +81,28 @@
             }
         }
         // -------------------------------------------------------------
+        function _defer() {
+            var result = {};
+            result.promise = new Promise(function(resolve, reject, notify) {
+                result.resolve = resolve;
+                result.reject  = reject;
+
+                // Q
+                if ( notify ) {
+                    result.notify = notify;
+                }
+            });
+            return result;
+        }
+        // -------------------------------------------------------------
         // Some more sugar:
-        sweeten.when    = sweeten;
         sweeten.resolve = function (val) { return sweeten(Promise.resolve(val)); };
         sweeten.reject  = function (val) { return sweeten(Promise.reject(val)); };
         sweeten.all     = function (val) { return sweeten(Promise.all(val)); };
         sweeten.race    = function (val) { return sweeten(Promise.race(val)); };
 
+        sweeten.when    = sweeten;
+        sweeten.defer   = Promise.defer || _defer;
         // -------------------------------------------------------------
         // Use a custom Promise implementation
         function usePromise(PromiseConstructor) {
@@ -96,7 +111,7 @@
 
         // -------------------------------------------------------------
         sweeten.usePromise = usePromise;
-        sweeten.VERSION = VERSION;
+        sweeten.VERSION    = VERSION;
         // -------------------------------------------------------------
         return sweeten;
     });
