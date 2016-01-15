@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.1.1
+ *  @version 1.2.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -10,9 +10,10 @@
 
 /*global Promise */
 ;(function (name, global) {
+    "use strict";
     var undefined
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.1.1'
+    ,   VERSION = '1.2.0'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -32,7 +33,7 @@
             }
 
             // Make sure p is a thenable
-            if ( !(p && p.then && typeof p.then === 'function') ) {
+            if ( !_isThenable(p) ) {
                 p = Promise.resolve(p);
             }
 
@@ -58,15 +59,22 @@
             return then;
 
             function then(onResolve, onReject, onNotify) {
+                if ( _isThenable(onResolve) ) {
+                    onResolve = _constant(onResolve);
+                }
+                if ( _isThenable(onReject) ) {
+                    onReject = _constant(onReject);
+                }
                 return sweeten(p.then.apply(p, arguments));
             }
         }
 
         // -------------------------------------------------------------
-        function _catch(reject) {
-            return this.then(undefined, reject);
+        function _catch(onReject) {
+            return this.then(undefined, onReject);
         }
 
+        // -------------------------------------------------------------
         function _finally(callback) {
             return this.then(
                 function(value) {
@@ -102,7 +110,12 @@
         sweeten.race    = function (val) { return sweeten(Promise.race(val)); };
 
         sweeten.when    = sweeten;
-        sweeten.defer   = Promise.defer || _defer;
+        sweeten.defer   = function () {
+            var defer = Promise.defer || _defer;
+            var defered = defer();
+            defered.promise = sweeten(defered.promise);
+            return defered;
+        };
         // -------------------------------------------------------------
         // Use a custom Promise implementation
         function usePromise(PromiseConstructor) {
@@ -114,6 +127,18 @@
         sweeten.VERSION    = VERSION;
         // -------------------------------------------------------------
         return sweeten;
+
+        // -------------------------------------------------------------
+        // Helpers:
+        // -------------------------------------------------------------
+        function _isThenable(p) {
+            return p && p.then && typeof p.then === 'function';
+        }
+
+        function _constant(val) {
+            return function(){ return val; };
+        }
+
     });
 }
 ('sweeten', typeof global == 'undefined' ? this : global));
