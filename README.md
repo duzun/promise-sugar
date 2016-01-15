@@ -5,7 +5,7 @@ The promise is the `.then` function itself!
 
 ## What it does?
 
-1) It allows you to convert this
+1 ) It allows you to convert this
 
 ```js
 Promise.resolve(10)
@@ -33,7 +33,7 @@ sweeten(10)
 (null, logError) // .catch
 ```
 
-2) and this
+2 ) and this
 
 ```js
 // Given two existing promises A and B
