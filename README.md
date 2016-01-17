@@ -60,6 +60,10 @@ That's it!
 
 **Promise-sugar** tries to preserve all other behaviours of the `Promise` library used.
 
+There is another library that implements a similar paradigm - [thunks](https://github.com/thunks/thunks).
+
+**Thunks** is different from **Promise-sugar** an more complex (a thunk is not a promise and it has no `.catch()` method).
+
 
 You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
 
