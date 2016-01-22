@@ -5,7 +5,7 @@ The promise is the `.then` function itself!
 
 ## What it does?
 
-1) It allows you to convert this
+1 ) It allows you to convert this
 
 ```js
 Promise.resolve(10)
@@ -33,7 +33,7 @@ sweeten(10)
 (null, logError) // .catch
 ```
 
-2) and this
+2 ) and this
 
 ```js
 // Given two existing promises A and B
@@ -59,6 +59,10 @@ var logError = console.error.bind(console);
 That's basically it!
 
 **Promise-sugar** tries to preserve all other behaviours of the `Promise` library used.
+
+There is another library that implements a similar paradigm - [thunks](https://github.com/thunks/thunks).
+
+**Thunks** is different from **Promise-sugar** an more complex (a thunk is not a promise and it has no `.catch()` method).
 
 
 You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
