@@ -56,7 +56,7 @@ var log      = console.log.bind(console);
 var logError = console.error.bind(console);
 ```
 
-That's it!
+That's basically it!
 
 **Promise-sugar** tries to preserve all other behaviours of the `Promise` library used.
 
@@ -101,12 +101,13 @@ Here are some helper method of **Promise-sugar**:
 ```js
 sweeten.when(value_or_thenable); // creates a sweeten promise
 var defered = sweeten.defer();   // creates a defered with a sweeten .promise
+sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
 
 // Promise/A+ sweet equivalents
 sweeten.resolve(val)
 sweeten.reject(val)
-sweeten.all(list)
 sweeten.race(list)
+sweeten.all(list)
 
 ```
 

@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.2.0
+ *  @version 1.3.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -13,7 +13,7 @@
     "use strict";
     var undefined
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.2.0'
+    ,   VERSION = '1.3.0'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -24,6 +24,10 @@
     /*define*/([], function factory() {
         // -------------------------------------------------------------
         var Promise = global.Promise;
+        // -------------------------------------------------------------
+        var isArray = Array.isArray || function isArray(val) {
+            return val instanceof Array;
+        };
         // -------------------------------------------------------------
 
         function sweeten(p) {
@@ -104,13 +108,38 @@
         }
         // -------------------------------------------------------------
         // Some more sugar:
-        sweeten.resolve = function (val) { return sweeten(Promise.resolve(val)); };
-        sweeten.reject  = function (val) { return sweeten(Promise.reject(val)); };
-        sweeten.all     = function (val) { return sweeten(Promise.all(val)); };
-        sweeten.race    = function (val) { return sweeten(Promise.race(val)); };
+        sweeten.resolve = function resolve(val) { return sweeten(Promise.resolve(val)); };
+        sweeten.reject  = function  reject(val) { return sweeten(Promise.reject(val)); };
+        sweeten.race    = function    race(val) { return sweeten(Promise.race(val)); };
+        sweeten.all     = function     all(val) { return sweeten(Promise.all(val)); };
+
+        sweeten.allValues = function allValues(val) {
+            if ( isArray(val) ) return sweeten.all(val);
+
+            var keys = Object.keys(val);
+            var len  = keys.length;
+            var values = new Array(len);
+            var isIndexed = val.length === len;
+            for ( var i=0, k; i<len; i++) {
+                k = keys[i];
+                if ( k != i ) isIndexed = false;
+                values[i] = val[k];
+            }
+            var prom = sweeten.all(values);
+            if ( !isIndexed ) {
+                prom = prom(function (values) {
+                    var ret = {};
+                    for ( var i=0; i<len; i++) {
+                        ret[keys[i]] = values[i];
+                    }
+                    return ret;
+                });
+            }
+            return prom;
+        };
 
         sweeten.when    = sweeten;
-        sweeten.defer   = function () {
+        sweeten.defer   = function defer() {
             var defer = Promise.defer || _defer;
             var defered = defer();
             defered.promise = sweeten(defered.promise);
