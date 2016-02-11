@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.3.0
+ *  @version 1.3.1
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -13,7 +13,7 @@
     "use strict";
     var undefined
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.3.0'
+    ,   VERSION = '1.3.1'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -51,10 +51,10 @@
             then.constructor = Promise;
 
             // Promise/A+
-            then.catch   = 'catch'   in PromisePrototype ? PromisePrototype.catch   : _catch  ;
+            then.catch   = _catch  ;
 
             // Q
-            then.finally = 'finally' in PromisePrototype ? PromisePrototype.finally : _finally;
+            then.finally = _finally;
 
             if ( 'progress' in PromisePrototype ) {
                 then.progress = PromisePrototype.progress;
