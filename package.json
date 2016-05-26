@@ -33,5 +33,18 @@
   },
   "devDependencies": {
     "verup": "^1.3"
+  },
+  "jshintConfig": {
+    "laxbreak": true,
+    "laxcomma": true,
+    "undef": true,
+    "unused": true,
+    "sub": true,
+    "expr": true,
+    "bitwise": false,
+    "eqeqeq": false,
+    "boss": true,
+    "eqnull": true,
+    "-W041": false
   }
 }
