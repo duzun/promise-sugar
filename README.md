@@ -107,6 +107,11 @@ sweeten.when(value_or_thenable); // creates a sweeten promise
 var defered = sweeten.defer();   // creates a defered with a sweeten .promise
 sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
 
+function sum(a,b) { return a + b; }
+var ssum = sweeten.fn(sum); // sweeten version of sum()
+ssum(2,3)(log); // -> 5
+
+
 // Promise/A+ sweet equivalents
 sweeten.resolve(val)
 sweeten.reject(val)

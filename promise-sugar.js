@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.3.1
+ *  @version 1.4.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -11,9 +11,9 @@
 /*global Promise */
 ;(function (name, global) {
     "use strict";
-    var undefined
+    var undefined //jshint ignore:line
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.3.1'
+    ,   VERSION = '1.4.0'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -145,6 +145,22 @@
             defered.promise = sweeten(defered.promise);
             return defered;
         };
+
+        /**
+         * Make an ordinary function sweet.
+         *
+         * @param  {Function} fn A function that returns any value or Promise
+         * @param  {Any} ctx Context of fn (this)
+         *
+         * @return {Function} equivalent of fn that always returns a sweeten Promise
+         */
+        sweeten.fn = function fn(fn, ctx) {
+            return arguments.length > 1
+                ? function () { return sweeten(fn.apply(ctx, arguments)); }
+                : function () { return sweeten(fn.apply(this, arguments)); }
+            ;
+        };
+
         // -------------------------------------------------------------
         // Use a custom Promise implementation
         function usePromise(PromiseConstructor) {
