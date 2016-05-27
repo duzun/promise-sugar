@@ -109,7 +109,7 @@ sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an
 
 function sum(a,b) { return a + b; }
 var ssum = sweeten.fn(sum); // sweeten version of sum()
-ssum(2,3)(log); // -> 5
+ssum(2, Promise.resolve(3))(log); // -> 5
 
 
 // Promise/A+ sweet equivalents
