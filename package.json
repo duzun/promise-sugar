@@ -1,6 +1,6 @@
 {
   "name": "promise-sugar",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Write promise chains without \".then\"",
   "main": "promise-sugar.js",
   "scripts": {

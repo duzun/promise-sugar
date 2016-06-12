@@ -2,7 +2,7 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.4.1
+ *  @version 1.4.2
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
@@ -13,7 +13,7 @@
     "use strict";
     var undefined //jshint ignore:line
     ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.4.1'
+    ,   VERSION = '1.4.2'
     ;
     (typeof define != 'function' || !define.amd
         ? typeof module != UNDEFINED && module.exports
@@ -141,7 +141,7 @@
         sweeten.when    = sweeten;
         sweeten.defer   = function defer() {
             var defer = Promise.defer || _defer;
-            var defered = defer();
+            var defered = defer.call(Promise);
             defered.promise = sweeten(defered.promise);
             return defered;
         };
