@@ -13,12 +13,14 @@ export default {
             file: main,
             name: 'sweeten',
             format: 'umd',
+            exports: 'default',
             sourcemap: true,
         },
         {
             file: unpkg,
             name: 'sweeten',
             format: 'umd',
+            exports: 'default',
             sourcemap: true,
             plugins: [
                 terser(), // minify JS/ES

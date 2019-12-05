@@ -10,7 +10,7 @@
 
 /*globals globalThis, window, global, self */
 
-export const VERSION = '2.0.0';
+const VERSION = '2.0.0';
 
     // -------------------------------------------------------------
 let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;

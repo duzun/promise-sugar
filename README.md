@@ -52,8 +52,8 @@ A(B)
 where
 
 ```js
-var log      = console.log.bind(console);
-var logError = console.error.bind(console);
+let log      = console.log.bind(console);
+let logError = console.error.bind(console);
 ```
 
 That's basically it!
@@ -76,9 +76,18 @@ You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
 npm install promise-sugar --save
 ```
 
-- Add `promise-sugar.js` to your app using require (AMD or CommonJs) or as a script tag.
+- Add `promise-sugar.js` to your app using `import` (ESM), `require` (AMD or CommonJs) or as a [script tag](https://unpkg.com/promise-sugar).
+
 ```js
-var sweeten = require('promise-sugar');
+import sweeten from 'promise-sugar';
+```
+
+```js
+const sweeten = require('promise-sugar');
+```
+
+```html
+<script src="https://unpkg.com/promise-sugar"></script>
 ```
 
 - Make sure there is a `Promise` implementation or get a polyfill like [es6-promise](https://www.npmjs.com/package/es6-promise).
@@ -104,11 +113,11 @@ Here are some helper method of **Promise-sugar**:
 
 ```js
 sweeten.when(value_or_thenable); // creates a sweeten promise
-var defered = sweeten.defer();   // creates a defered with a sweeten .promise
+let deffered = sweeten.defer();   // creates a deffered with a sweeten .promise
 sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
 
 function sum(a,b) { return a + b; }
-var ssum = sweeten.fn(sum); // sweeten version of sum()
+let ssum = sweeten.fn(sum); // sweeten version of sum()
 ssum(2, Promise.resolve(3))(log); // -> 5
 
 
@@ -126,7 +135,7 @@ sweeten.all(list)
 Sweeten promises are just promises and functions (`then`s) at the same time:
 
 ```js
-var result = sweeten(fetch('/my/api'))
+let result = sweeten(fetch('/my/api'))
              (function(res) { return res.json(); })
 ;
 
