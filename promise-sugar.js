@@ -2,53 +2,43 @@
  *  Promise syncatctic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 1.4.2
+ *  @version 2.0.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author DUzun.Me
  */
 
 /*global Promise */
-;(function (name, global) {
-    "use strict";
-    var undefined //jshint ignore:line
-    ,   UNDEFINED = undefined + ''
-    ,   VERSION = '1.4.2'
-    ;
-    (typeof define != 'function' || !define.amd
-        ? typeof module != UNDEFINED && module.exports
-            ? function (deps, factory) { module.exports = factory(); } // CommonJs
-            : function (deps, factory) { global[name] = factory(); } // Browser
-        : define // AMD
-    )
-    /*define*/([], function factory() {
+
+export const VERSION = '2.0.0';
+
         // -------------------------------------------------------------
-        var Promise = global.Promise;
+let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;
         // -------------------------------------------------------------
         var isArray = Array.isArray || function isArray(val) {
             return val instanceof Array;
         };
         // -------------------------------------------------------------
 
-        function sweeten(p) {
+        export default function sweeten(p) {
             // new Promise(p) - [[Construct]]
             if ( this instanceof sweeten ) {
-                return sweeten(new Promise(p));
+                return sweeten(new nativePromise(p));
             }
 
             // Make sure p is a thenable
             if ( !_isThenable(p) ) {
-                p = Promise.resolve(p);
+                p = nativePromise.resolve(p);
             }
 
             then.then = then;
 
-            var PromisePrototype = Promise.prototype;
+            var PromisePrototype = nativePromise.prototype;
 
             // then.__proto__ = PromisePrototype; // not sure this is a good idea
 
             // an alternative to setting then.__proto__:
-            then.constructor = Promise;
+            then.constructor = nativePromise;
 
             // Promise/A+
             then.catch   = _catch  ;
@@ -95,7 +85,7 @@
         // -------------------------------------------------------------
         function _defer() {
             var result = {};
-            result.promise = new Promise(function(resolve, reject, notify) {
+            result.promise = new nativePromise(function(resolve, reject, notify) {
                 result.resolve = resolve;
                 result.reject  = reject;
 
@@ -108,10 +98,10 @@
         }
         // -------------------------------------------------------------
         // Some more sugar:
-        sweeten.resolve = function resolve(val) { return sweeten(Promise.resolve(val)); };
-        sweeten.reject  = function  reject(val) { return sweeten(Promise.reject(val)); };
-        sweeten.race    = function    race(val) { return sweeten(Promise.race(val)); };
-        sweeten.all     = function     all(val) { return sweeten(Promise.all(val)); };
+        sweeten.resolve = function resolve(val) { return sweeten(nativePromise.resolve(val)); };
+        sweeten.reject  = function  reject(val) { return sweeten(nativePromise.reject(val)); };
+        sweeten.race    = function    race(val) { return sweeten(nativePromise.race(val)); };
+        sweeten.all     = function     all(val) { return sweeten(nativePromise.all(val)); };
 
         sweeten.allValues = function allValues(val) {
             if ( isArray(val) ) return sweeten.all(val);
@@ -140,10 +130,10 @@
 
         sweeten.when    = sweeten;
         sweeten.defer   = function defer() {
-            var defer = Promise.defer || _defer;
-            var defered = defer.call(Promise);
-            defered.promise = sweeten(defered.promise);
-            return defered;
+            const defer = nativePromise.defer || _defer;
+            const deferred = defer.call(nativePromise);
+            deferred.promise = sweeten(deferred.promise);
+            return deferred;
         };
 
         /**
@@ -167,28 +157,22 @@
         };
 
         // -------------------------------------------------------------
-        // Use a custom Promise implementation
+        /// Use a custom Promise implementation
         function usePromise(PromiseConstructor) {
-            Promise = PromiseConstructor;
+            nativePromise = PromiseConstructor;
         }
 
         // -------------------------------------------------------------
         sweeten.usePromise = usePromise;
         sweeten.VERSION    = VERSION;
-        // -------------------------------------------------------------
-        return sweeten;
 
-        // -------------------------------------------------------------
-        // Helpers:
-        // -------------------------------------------------------------
-        function _isThenable(p) {
-            return p && p.then && typeof p.then === 'function';
-        }
-
-        function _constant(val) {
-            return function(){ return val; };
-        }
-
-    });
+// -------------------------------------------------------------
+// Helpers:
+// -------------------------------------------------------------
+function _isThenable(p) {
+    return p && typeof p.then === 'function';
 }
-('sweeten', typeof global == 'undefined' ? this : global));
+
+function _constant(val) {
+    return () => val;
+}
