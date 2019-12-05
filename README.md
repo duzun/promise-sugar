@@ -115,6 +115,7 @@ Here are some helper method of **Promise-sugar**:
 sweeten.when(value_or_thenable); // creates a sweeten promise
 let deffered = sweeten.defer();   // creates a deffered with a sweeten .promise
 sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
+if(sweeten.isThenable(any)) any.then(doStuff);
 
 function sum(a,b) { return a + b; }
 let ssum = sweeten.fn(sum); // sweeten version of sum()

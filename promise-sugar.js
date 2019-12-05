@@ -2,7 +2,7 @@
  *  Promise syntactic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 2.0.0
+ *  @version 2.0.1
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author Dumitru Uzun (DUzun.Me)
@@ -27,7 +27,7 @@ let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis
         }
 
         // Make sure p is a thenable
-        if ( !_isThenable(p) ) {
+        if ( !isThenable(p) ) {
             p = nativePromise.resolve(p);
         }
 
@@ -53,10 +53,10 @@ let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis
         return then;
 
         function then(onResolve, onReject, onNotify) {
-            if ( _isThenable(onResolve) ) {
+            if ( isThenable(onResolve) ) {
                 onResolve = _constant(onResolve);
             }
-            if ( _isThenable(onReject) ) {
+            if ( isThenable(onReject) ) {
                 onReject = _constant(onReject);
             }
             return sweeten(p.then.apply(p, arguments));
@@ -136,6 +136,8 @@ let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis
         return deferred;
     };
 
+    sweeten.isThenable = isThenable;
+
     /**
      * Make an ordinary function sweet for promises.
      *
@@ -169,10 +171,10 @@ let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis
 // -------------------------------------------------------------
 // Helpers:
 // -------------------------------------------------------------
-function _isThenable(p) {
-return p && typeof p.then === 'function';
+function isThenable(p) {
+    return p && typeof p.then === 'function';
 }
 
 function _constant(val) {
-return () => val;
+    return () => val;
 }
