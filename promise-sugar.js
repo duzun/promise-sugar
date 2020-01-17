@@ -2,7 +2,7 @@
  *  Promise syntactic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 2.0.1
+ *  @version 2.0.2
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author Dumitru Uzun (DUzun.Me)
@@ -10,7 +10,7 @@
 
 /*globals globalThis, window, global, self */
 
-const VERSION = '2.0.0';
+const VERSION = '2.0.2';
 
 // -------------------------------------------------------------
 let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;
@@ -71,12 +71,8 @@ function _catch(onReject) {
 // -------------------------------------------------------------
 function _finally(callback) {
     return this.then(
-        function(value) {
-            return resolver().then(function() { return value; });
-        },
-        function(reason) {
-            return resolver().then(function() { throw reason; });
-        }
+        (value) => resolver().then(() => value),
+        (reason) => resolver().then(() => { throw reason; })
     );
     function resolver() {
         return sweeten.resolve(callback());
@@ -106,19 +102,19 @@ sweeten.all     = function     all(val) { return sweeten(nativePromise.all(val))
 sweeten.allValues = function allValues(val) {
     if ( isArray(val) ) return sweeten.all(val);
 
-    var keys = Object.keys(val);
-    var len  = keys.length;
-    var values = new Array(len);
-    var isIndexed = val.length === len;
+    const keys = Object.keys(val);
+    const len  = keys.length;
+    const values = new Array(len);
+    let isIndexed = val.length === len;
     for ( var i=0, k; i<len; i++) {
         k = keys[i];
         if ( k != i ) isIndexed = false;
         values[i] = val[k];
     }
-    var prom = sweeten.all(values);
+    let prom = sweeten.all(values);
     if ( !isIndexed ) {
         prom = prom(function (values) {
-            var ret = {};
+            let ret = {};
             for ( var i=0; i<len; i++) {
                 ret[keys[i]] = values[i];
             }
@@ -149,11 +145,11 @@ sweeten.isThenable = isThenable;
 sweeten.fn = function fn(fn, ctx) {
     return arguments.length > 1
         ? function () {
-            return sweeten.all(arguments)(function (a) { return fn.apply(ctx, a); });
+            return sweeten.all(arguments)((a) => fn.apply(ctx, a));
         }
         : function () {
             var ctx = this;
-            return sweeten.all(arguments)(function (a) { return fn.apply(ctx, a); });
+            return sweeten.all(arguments)((a) => fn.apply(ctx, a));
         }
     ;
 };

@@ -1,6 +1,6 @@
 {
   "name": "promise-sugar",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Promise syntactic sugar - promise chains without write \".then\"",
   "module": "promise-sugar.js",
   "main": "dist/promise-sugar.js",
@@ -24,7 +24,7 @@
     "lisp",
     "no-then"
   ],
-  "author": "Dumitru Uzun <contanct@duzun.me> (https://DUzun.Me)",
+  "author": "Dumitru Uzun <contact@duzun.me> (https://DUzun.Me)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/duzun/promise-sugar/issues"
@@ -36,11 +36,11 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
     "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-terser": "^5.1.2",
-    "verup": "^1.3"
+    "rollup-plugin-terser": "^5.2.0",
+    "verup": "^1.7.1"
   },
   "jshintConfig": {
     "esversion": 9,

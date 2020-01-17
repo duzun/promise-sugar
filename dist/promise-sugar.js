@@ -8,14 +8,14 @@
      *  Promise syntactic sugar - no need to write ".then"
      *
      *  @license MIT
-     *  @version 2.0.1
+     *  @version 2.0.2
      *  @git https://github.com/duzun/promise-sugar
      *  @umd AMD, Browser, CommonJs
      *  @author Dumitru Uzun (DUzun.Me)
      */
 
     /*globals globalThis, window, global, self */
-    var VERSION = '2.0.0'; // -------------------------------------------------------------
+    var VERSION = '2.0.2'; // -------------------------------------------------------------
 
     var nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise; // -------------------------------------------------------------
 
