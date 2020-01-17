@@ -1,6 +1,6 @@
 {
   "name": "promise-sugar",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Promise syntactic sugar - promise chains without write \".then\"",
   "module": "promise-sugar.js",
   "main": "dist/promise-sugar.js",

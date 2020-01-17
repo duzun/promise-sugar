@@ -8,14 +8,14 @@
      *  Promise syntactic sugar - no need to write ".then"
      *
      *  @license MIT
-     *  @version 2.0.2
+     *  @version 2.1.0
      *  @git https://github.com/duzun/promise-sugar
      *  @umd AMD, Browser, CommonJs
      *  @author Dumitru Uzun (DUzun.Me)
      */
 
     /*globals globalThis, window, global, self */
-    var VERSION = '2.0.2'; // -------------------------------------------------------------
+    var VERSION = '2.1.0'; // -------------------------------------------------------------
 
     var nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise; // -------------------------------------------------------------
 
@@ -43,7 +43,9 @@
 
       then["catch"] = _catch; // Q
 
-      then["finally"] = _finally;
+      then["finally"] = _finally; // Goodies
+
+      then.timeout = _timeout;
 
       if ('progress' in PromisePrototype) {
         then.progress = PromisePrototype.progress;
@@ -83,6 +85,32 @@
       function resolver() {
         return sweeten.resolve(callback());
       }
+    } // -------------------------------------------------------------
+
+    /**
+     * Timeout a promise
+     *
+     * @param  int expires how long to wait for `promise` in ms
+     * @param  bool throws If true, throw on timeout
+     * @return Promise resolves before `expires` or rejects with timeout error
+     */
+
+
+    function _timeout(expires) {
+      var _throws = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      var promise = this;
+      var waiter = nWait(expires);
+
+      if (_throws) {
+        waiter = waiter.then(function () {
+          var error = new Error('Promise Timeout');
+          error.promise = promise;
+          throw error;
+        });
+      }
+
+      return sweeten.race([promise, waiter]);
     } // -------------------------------------------------------------
 
 
@@ -156,6 +184,7 @@
       return deferred;
     };
 
+    sweeten.wait = wait;
     sweeten.isThenable = isThenable;
     /**
      * Make an ordinary function sweet for promises.
@@ -190,6 +219,32 @@
     sweeten.VERSION = VERSION; // -------------------------------------------------------------
     // Helpers:
     // -------------------------------------------------------------
+
+    function nWait(timeout) {
+      var stop;
+      var waiter = new nativePromise(function (resolve, reject) {
+        var id = setTimeout(resolve, timeout);
+
+        stop = function stop(execute) {
+          if (id) {
+            clearTimeout(id);
+            execute ? resolve(id) : reject(id);
+            id = undefined;
+          }
+        };
+      });
+      waiter.stop = stop;
+      return waiter;
+    }
+
+    function wait(timeout) {
+      var waiter = nWait(timeout);
+      var _waiter = waiter,
+          stop = _waiter.stop;
+      waiter = sweeten(waiter);
+      waiter.stop = stop;
+      return waiter;
+    }
 
     function isThenable(p) {
       return p && typeof p.then === 'function';

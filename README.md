@@ -104,7 +104,8 @@ Regardless of the `Promise` implementation used, all sweeten promises have the f
 ```js
 sweeten(promise)
     .catch(onReject)   // Promite/A+
-    .finally(callback) // not a Promise/A+
+    .timeout(1000)     // reject in 1 sec, not a Promise/A+ method
+    .finally(callback) // not a Promise/A+ method
 ```
 
 If `Promise.prototype.progress` is defined, **Promise-sugar** will preserve it.
@@ -113,9 +114,13 @@ Here are some helper method of **Promise-sugar**:
 
 ```js
 sweeten.when(value_or_thenable); // creates a sweeten promise
-let deffered = sweeten.defer();   // creates a deffered with a sweeten .promise
+let deffered = sweeten.defer();  // creates a deffered with a sweeten .promise
 sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
 if(sweeten.isThenable(any)) any.then(doStuff);
+let waiter = sweeten.wait(123);  // setTimeout()
+waiter.then(doStuffLater);
+waiter.stop();                   // don't doStuffLater() (like clearTimeout())
+
 
 function sum(a,b) { return a + b; }
 let ssum = sweeten.fn(sum); // sweeten version of sum()
