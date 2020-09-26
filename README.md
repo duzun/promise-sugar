@@ -58,7 +58,7 @@ let logError = console.error.bind(console);
 
 That's basically it!
 
-**Promise-sugar** tries to preserve all other behaviours of the `Promise` library used.
+**Promise-sugar** tries to preserve all other behaviors of the `Promise` library used.
 
 There is another library that implements a similar paradigm - [thunks](https://github.com/thunks/thunks).
 
