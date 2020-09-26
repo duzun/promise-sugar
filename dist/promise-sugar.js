@@ -8,14 +8,14 @@
      *  Promise syntactic sugar - no need to write ".then"
      *
      *  @license MIT
-     *  @version 2.1.0
+     *  @version 2.2.0
      *  @git https://github.com/duzun/promise-sugar
      *  @umd AMD, Browser, CommonJs
      *  @author Dumitru Uzun (DUzun.Me)
      */
 
     /*globals globalThis, window, global, self */
-    var VERSION = '2.1.0'; // -------------------------------------------------------------
+    var VERSION = '2.2.0'; // -------------------------------------------------------------
 
     var nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise; // -------------------------------------------------------------
 
@@ -55,11 +55,11 @@
 
       function then(onResolve, onReject, onNotify) {
         if (isThenable(onResolve)) {
-          onResolve = _constant(onResolve);
+          arguments[0] = onResolve = _constant(onResolve);
         }
 
         if (isThenable(onReject)) {
-          onReject = _constant(onReject);
+          arguments[1] = onReject = _constant(onReject);
         }
 
         return sweeten(p.then.apply(p, arguments));
@@ -101,6 +101,8 @@
 
       var promise = this;
       var waiter = nWait(expires);
+      var _waiter = waiter,
+          stop = _waiter.stop;
 
       if (_throws) {
         waiter = waiter.then(function () {
@@ -109,6 +111,10 @@
           throw error;
         });
       }
+
+      promise.then(function () {
+        return stop()["catch"](_constant);
+      }); // no need to keep the waiter promise
 
       return sweeten.race([promise, waiter]);
     } // -------------------------------------------------------------
@@ -143,6 +149,30 @@
 
     sweeten.all = function all(val) {
       return sweeten(nativePromise.all(val));
+    };
+
+    sweeten.any = function any(val) {
+      var prom = nativePromise.any ? nativePromise.any(val) : new nativePromise(function (resolve, reject) {
+        var errors = [];
+        var count = 0;
+
+        function onReject(error) {
+          errors.push(error);
+          if (! --count) reject(errors);
+        }
+
+        if (!isArray(val)) val = Array.from(val);
+        val.forEach(function (p) {
+          ++count;
+          if (!isThenable(p)) p = nativePromise.resolve(p);
+          p.then(resolve, onReject);
+        }); // for(let p of val) {
+        //     ++count;
+        //     if(!isThenable(p)) p = nativePromise.resolve(p);
+        //     p.then(resolve, onReject);
+        // }
+      });
+      return sweeten(prom);
     };
 
     sweeten.allValues = function allValues(val) {
@@ -231,6 +261,8 @@
             execute ? resolve(id) : reject(id);
             id = undefined;
           }
+
+          return waiter;
         };
       });
       waiter.stop = stop;
@@ -239,8 +271,8 @@
 
     function wait(timeout) {
       var waiter = nWait(timeout);
-      var _waiter = waiter,
-          stop = _waiter.stop;
+      var _waiter2 = waiter,
+          stop = _waiter2.stop;
       waiter = sweeten(waiter);
       waiter.stop = stop;
       return waiter;
