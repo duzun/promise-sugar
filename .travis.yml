@@ -1,0 +1,31 @@
+language: node_js
+os: linux
+dist: trusty
+
+node_js:
+- "stable"
+- "14.0"
+- "13.0"
+- "12.0"
+- "11.0"
+- "10.0"
+
+jobs:
+    fast_finish: true
+    allow_failures:
+        - node_js: '11.0'
+        - node_js: '10.0'
+
+cache:
+    directories:
+        - node_modules
+    timeout: 1440
+
+before_script:
+    - command -v npx || npm i -g npx
+
+script:
+  - npm run test
+
+# after_script:
+#   - npx codecov

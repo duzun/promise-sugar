@@ -96,7 +96,7 @@ describe('sweeten.any(array)', () => {
     let prom2 = sweeten(2);
     let prom3 = sweeten.reject('error');
     let prom4 = sweeten.wait(31)(() => { throw 'error4'; });
-    let prom5 = sweeten.wait(32)(() => 5);
+    let prom5 = sweeten.wait(48)(() => 5);
 
     // suppress UnhandledPromiseRejectionWarning
     prom3.catch(noop);
@@ -147,16 +147,16 @@ describe('sweeten.any(array)', () => {
 });
 
 describe('sweeten.defer()', () => {
-    it('should create a defered object with sweeten .promise', () => {
-        let defered = sweeten.defer();
-        isSweetenPromise(defered.promise);
+    it('should create a deferred object with sweeten .promise', () => {
+        let deferred = sweeten.defer();
+        isSweetenPromise(deferred.promise);
 
         setTimeout(() => {
-            defered.resolve('ok.defered');
+            deferred.resolve('ok.deferred');
         }, 4);
 
-        return defered.promise((val) => {
-            expect(val).to.equal('ok.defered');
+        return deferred.promise((val) => {
+            expect(val).to.equal('ok.deferred');
         });
     });
 });

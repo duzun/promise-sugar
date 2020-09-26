@@ -1,9 +1,9 @@
-## Promise syntactic sugar
+## Promise syntactic sugar [![Build Status](https://travis-ci.org/duzun/promise-sugar.svg?branch=master)](https://travis-ci.org/duzun/promise-sugar)
 
 No need to write `.then` in your promise chains.
 The promise is the `.then` function itself!
 
-## What it does?
+## What it does
 
 1 ) It allows you to convert this
 
@@ -64,9 +64,7 @@ There is another library that implements a similar paradigm - [thunks](https://g
 
 **Thunks** is different from **Promise-sugar** an more complex (a thunk is not a promise and it has no `.catch()` method).
 
-
 You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
-
 
 ## Install
 
@@ -96,7 +94,6 @@ const sweeten = require('promise-sugar');
 sweeten.usePromise(require('es6-promise').Promise); // polyfill
 ```
 
-
 ## More sugar
 
 Regardless of the `Promise` implementation used, all sweeten promises have the following methods:
@@ -114,7 +111,7 @@ Here are some helper method of **Promise-sugar**:
 
 ```js
 sweeten.when(value_or_thenable); // creates a sweeten promise
-let deffered = sweeten.defer();  // creates a deffered with a sweeten .promise
+let deferred = sweeten.defer();  // creates a deferred with a sweeten .promise
 sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
 if(sweeten.isThenable(any)) any.then(doStuff);
 let waiter = sweeten.wait(123);  // setTimeout()
@@ -132,9 +129,9 @@ sweeten.resolve(val)
 sweeten.reject(val)
 sweeten.race(list)
 sweeten.all(list)
+sweeten.any(list)
 
 ```
-
 
 ## Examples
 
