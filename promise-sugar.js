@@ -2,7 +2,7 @@
  *  Promise syntactic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 2.1.0
+ *  @version 2.2.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author Dumitru Uzun (DUzun.Me)
@@ -10,7 +10,7 @@
 
 /*globals globalThis, window, global, self */
 
-const VERSION = '2.1.0';
+const VERSION = '2.2.0';
 
 // -------------------------------------------------------------
 let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;
@@ -33,7 +33,7 @@ export default function sweeten(p) {
 
     then.then = then;
 
-    var PromisePrototype = nativePromise.prototype;
+    let PromisePrototype = nativePromise.prototype;
 
     // then.__proto__ = PromisePrototype; // not sure this is a good idea
 
@@ -57,9 +57,11 @@ export default function sweeten(p) {
 
     function then(onResolve, onReject, onNotify) {
         if ( isThenable(onResolve) ) {
+            arguments[0] =
             onResolve = _constant(onResolve);
         }
         if ( isThenable(onReject) ) {
+            arguments[1] =
             onReject = _constant(onReject);
         }
         return sweeten(p.then.apply(p, arguments));
@@ -92,6 +94,7 @@ function _finally(callback) {
 function _timeout(expires, throws=true) {
     const promise = this;
     let waiter = nWait(expires);
+    const { stop } = waiter;
     if ( throws ) {
         waiter = waiter.then(() => {
             const error = new Error('Promise Timeout');
@@ -99,6 +102,7 @@ function _timeout(expires, throws=true) {
             throw error;
         });
     }
+    promise.then(() => stop().catch(_constant)); // no need to keep the waiter promise
     return sweeten.race([promise, waiter]);
 }
 
@@ -122,6 +126,29 @@ sweeten.resolve = function resolve(val) { return sweeten(nativePromise.resolve(v
 sweeten.reject  = function  reject(val) { return sweeten(nativePromise.reject(val)); };
 sweeten.race    = function    race(val) { return sweeten(nativePromise.race(val)); };
 sweeten.all     = function     all(val) { return sweeten(nativePromise.all(val)); };
+
+sweeten.any     = function     any(val) {
+    const prom = nativePromise.any ? nativePromise.any(val) : new nativePromise((resolve, reject) => {
+        let errors = [];
+        let count = 0;
+        function onReject(error) {
+            errors.push(error);
+            if(!--count) reject(errors);
+        }
+        if(!isArray(val)) val = Array.from(val);
+        val.forEach((p) => {
+            ++count;
+            if(!isThenable(p)) p = nativePromise.resolve(p);
+            p.then(resolve, onReject);
+        });
+        // for(let p of val) {
+        //     ++count;
+        //     if(!isThenable(p)) p = nativePromise.resolve(p);
+        //     p.then(resolve, onReject);
+        // }
+    });
+    return sweeten(prom);
+};
 
 sweeten.allValues = function allValues(val) {
     if ( isArray(val) ) return sweeten.all(val);
@@ -203,6 +230,7 @@ function nWait(timeout) {
                 execute ? resolve(id) : reject(id);
                 id = undefined;
             }
+            return waiter;
         }
     });
     waiter.stop = stop;
