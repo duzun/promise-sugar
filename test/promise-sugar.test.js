@@ -141,6 +141,7 @@ describe('sweeten.any(array)', () => {
                     expect(true).to.be.false; // never resolves
                 }, (err) => {
                     expect(!err).to.be.false;
+                    expect(err.errors.join(',')).to.equal(['error', 'error4'].join(','));
                 })
         ]);
     });
