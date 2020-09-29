@@ -52,8 +52,8 @@ A(B)
 where
 
 ```js
-let log      = console.log.bind(console);
-let logError = console.error.bind(console);
+const log      = console.log.bind(console);
+const logError = console.error.bind(console);
 ```
 
 That's basically it!
@@ -62,7 +62,7 @@ That's basically it!
 
 There is another library that implements a similar paradigm - [thunks](https://github.com/thunks/thunks).
 
-**Thunks** is different from **Promise-sugar** an more complex (a thunk is not a promise and it has no `.catch()` method).
+**Thunks** is different from **Promise-sugar** and more complex (a thunk is not a promise and it has no `.catch()` method).
 
 You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
 
@@ -74,7 +74,7 @@ You can play with it on [jsBin](https://jsbin.com/punaxa/edit?js,console,output)
 npm install promise-sugar --save
 ```
 
-- Add `promise-sugar.js` to your app using `import` (ESM), `require` (AMD or CommonJs) or as a [script tag](https://unpkg.com/promise-sugar).
+- Import `promise-sugar.js` into your app using `import` (ESM), `require` (AMD or CommonJs) or as a [script tag](https://unpkg.com/promise-sugar).
 
 ```js
 import sweeten from 'promise-sugar';
@@ -101,19 +101,22 @@ Regardless of the `Promise` implementation used, all sweeten promises have the f
 ```js
 sweeten(promise)
     .catch(onReject)   // Promite/A+
-    .timeout(1000)     // reject in 1 sec, not a Promise/A+ method
     .finally(callback) // not a Promise/A+ method
+    .timeout(1000)     // reject in 1 sec, not a Promise/A+ method
 ```
 
 If `Promise.prototype.progress` is defined, **Promise-sugar** will preserve it.
 
-Here are some helper method of **Promise-sugar**:
+Here are some helper methods of **Promise-sugar**:
 
 ```js
 sweeten.when(value_or_thenable); // creates a sweeten promise
 let deferred = sweeten.defer();  // creates a deferred with a sweeten .promise
+
 sweeten.allValues(obj);          // Similar to Promise.all(list), but accepts an object with thenable values
+
 if(sweeten.isThenable(any)) any.then(doStuff);
+
 let waiter = sweeten.wait(123);  // setTimeout()
 waiter.then(doStuffLater);
 waiter.stop();                   // don't doStuffLater() (like clearTimeout())
@@ -139,7 +142,7 @@ Sweeten promises are just promises and functions (`then`s) at the same time:
 
 ```js
 let result = sweeten(fetch('/my/api'))
-             (function(res) { return res.json(); })
+             ((res) => res.json())
 ;
 
 // Now you have a simple function that contains your result
@@ -160,9 +163,9 @@ sweeten.all([result, fetch('my/api/something/else')])
 Sweeten promise constructor:
 
 ```js
-var myStuff = new sweeten(function (resolve, rejext){
+let myStuff = new sweeten(function (resolve, rejext){
     setTimeout(resolve, 100, Math.random());
 });
 
-myStuff(function(myNumber){/*...*/}, function(error){/*...*/});
+myStuff((myNumber) => {/*...*/}, (error) => {/*...*/});
 ```
