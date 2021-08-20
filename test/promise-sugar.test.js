@@ -4,7 +4,7 @@ const { default: sweeten } = esm('../promise-sugar');
 
 function noop() { }
 
-/*globals describe, it*/
+/*globals describe, it, beforeEach, afterEach*/
 describe('sweeten(promise)', () => {
     let value = 'ok';
     let error = new Error('uups');
@@ -101,6 +101,17 @@ describe('sweeten.any(array)', () => {
     // suppress UnhandledPromiseRejectionWarning
     prom3.catch(noop);
     prom4.catch(noop);
+
+    // We want to test the polyfilled version of any
+    let _any;
+    beforeEach(() => {
+        _any = Promise.any;
+        delete Promise.any;
+    });
+
+    afterEach(() => {
+        Promise.any = _any;
+    });
 
     it('should resolve with the first promise/value', () => {
         return sweeten.all([
