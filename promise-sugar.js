@@ -2,7 +2,7 @@
  *  Promise syntactic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 2.2.1
+ *  @version 2.3.0
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author Dumitru Uzun (DUzun.Me)
@@ -10,7 +10,7 @@
 
 /*globals globalThis, window, global, self */
 
-const VERSION = '2.2.1';
+const VERSION = '2.3.0';
 
 // -------------------------------------------------------------
 let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;
@@ -155,6 +155,27 @@ sweeten.any     = function     any(val) {
     return sweeten(prom);
 };
 
+sweeten.allSettled = function allSettled(val) {
+    const prom = nativePromise.allSettled
+        ? nativePromise.allSettled(val)
+        : ((promises) => nativePromise.all(
+            promises.map((p) => p
+                .then(
+                    (value) => ({ status: 'fulfilled', value }),
+                    (reason) => ({ status: 'rejected', reason })
+                )
+            )
+        ));
+    return sweeten(prom);
+};
+
+/**
+ * Similar to Promise.all(list), but accepts an object with thenable values
+ *
+ * @param   {Object}  val  An object with promises as values
+ *
+ * @return  {Promise}       Resolves to an object with all values resolved.
+ */
 sweeten.allValues = function allValues(val) {
     if ( isArray(val) ) return sweeten.all(val);
 
@@ -190,26 +211,7 @@ sweeten.defer   = function defer() {
 
 sweeten.wait = wait;
 sweeten.isThenable = isThenable;
-
-/**
- * Make an ordinary function sweet for promises.
- *
- * @param  {Function} fn A function that returns any value or Promise
- * @param  {Any} ctx Context of fn (this)
- *
- * @return {Function} equivalent of fn that always returns a sweeten Promise
- */
-sweeten.fn = function fn(fn, ctx) {
-    return arguments.length > 1
-        ? function () {
-            return sweeten.all(arguments)((a) => fn.apply(ctx, a));
-        }
-        : function () {
-            var ctx = this;
-            return sweeten.all(arguments)((a) => fn.apply(ctx, a));
-        }
-    ;
-};
+sweeten.fn = fn;
 
 // -------------------------------------------------------------
 /// Use a custom Promise implementation
@@ -224,6 +226,26 @@ sweeten.VERSION    = VERSION;
 // -------------------------------------------------------------
 // Helpers:
 // -------------------------------------------------------------
+
+/**
+ * Make an ordinary function sweet for promises.
+ *
+ * @param  {Function} fn A function that returns any value or Promise
+ * @param  {Any} ctx Context of fn (this)
+ *
+ * @return {Function} equivalent of fn that always returns a sweeten Promise
+ */
+function fn(fn, ctx) {
+    return arguments.length > 1
+        ? function () {
+            return sweeten.all(arguments)((a) => fn.apply(ctx, a));
+        }
+        : function () {
+            var ctx = this;
+            return sweeten.all(arguments)((a) => fn.apply(ctx, a));
+        }
+        ;
+}
 
 function nWait(timeout) {
     var stop;

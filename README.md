@@ -1,4 +1,4 @@
-## Promise syntactic sugar [![Build Status](https://travis-ci.org/duzun/promise-sugar.svg?branch=master)](https://travis-ci.org/duzun/promise-sugar)
+## Promise syntactic sugar [![Build Status](https://travis-ci.com/duzun/promise-sugar.svg?branch=master)](https://travis-ci.com/duzun/promise-sugar)
 
 No need to write `.then` in your promise chains.
 The promise is the `.then` function itself!
@@ -133,6 +133,7 @@ sweeten.reject(val)
 sweeten.race(list)
 sweeten.all(list)
 sweeten.any(list)
+sweeten.allSettled(list)
 
 ```
 
