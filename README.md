@@ -9,12 +9,8 @@ The promise is the `.then` function itself!
 
 ```js
 Promise.resolve(10)
-.then(function(n){
-    return n / 2
-})
-.then(function(n){
-    return n * 3
-})
+.then((n) => n / 2)
+.then((n) => n * 3)
 .then(log) // -> 15
 .catch(logError)
 ```
@@ -23,12 +19,8 @@ into this
 
 ```js
 sweeten(10)
-(function(n){
-    return n / 2
-})
-(function(n){
-    return n * 3
-})
+((n) => n / 2)
+((n) => n * 3)
 (log, logError) // -> 15
 (null, logError) // .catch
 ```
@@ -38,7 +30,7 @@ sweeten(10)
 ```js
 // Given two existing promises A and B
 A
-.then(function () { return B; } ) // wait for A and B and return B's value
+.then(() => B) // wait for A and B and return B's value
 .then(log) // -> B's value
 ```
 
@@ -56,7 +48,7 @@ const log      = console.log.bind(console);
 const logError = console.error.bind(console);
 ```
 
-That's basically it!
+That's almost it! For [**More sugar**](#more-sugar) see below.
 
 **Promise-sugar** tries to preserve all other behaviors of the `Promise` library used.
 
