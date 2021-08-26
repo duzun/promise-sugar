@@ -2,7 +2,7 @@
  *  Promise syntactic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 2.3.0
+ *  @version 2.3.1
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author Dumitru Uzun (DUzun.Me)
@@ -10,7 +10,7 @@
 
 /*globals globalThis, window, global, self */
 
-const VERSION = '2.3.0';
+const VERSION = '2.3.1';
 
 // -------------------------------------------------------------
 let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;
@@ -158,14 +158,15 @@ sweeten.any     = function     any(val) {
 sweeten.allSettled = function allSettled(val) {
     const prom = nativePromise.allSettled
         ? nativePromise.allSettled(val)
-        : ((promises) => nativePromise.all(
-            promises.map((p) => p
-                .then(
+        : nativePromise.all(
+            val.map((value) => !isThenable(value)
+                ? { status: 'fulfilled', value }
+                : value.then(
                     (value) => ({ status: 'fulfilled', value }),
                     (reason) => ({ status: 'rejected', reason })
                 )
             )
-        ));
+        );
     return sweeten(prom);
 };
 
