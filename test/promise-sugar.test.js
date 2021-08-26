@@ -158,6 +158,95 @@ describe('sweeten.any(array)', () => {
     });
 });
 
+describe('sweeten.allSettled(array)', () => {
+    let prom1 = Promise.resolve(1);
+    let prom2 = sweeten(2);
+    let prom3 = sweeten.reject('error');
+    let prom4 = sweeten.wait(31)(() => { throw 'error4'; });
+    let prom5 = sweeten.wait(48)(() => 5);
+
+    // suppress UnhandledPromiseRejectionWarning
+    prom3.catch(noop);
+    prom4.catch(noop);
+
+    // We want to test the polyfilled version of any
+    let _allSettled;
+    beforeEach(() => {
+        _allSettled = Promise.allSettled;
+        delete Promise.allSettled;
+    });
+
+    afterEach(() => {
+        Promise.allSettled = _allSettled;
+    });
+
+    it('should resolve when all promises fulfilled or rejected', () => {
+        function cmpSettled(val, expected) {
+            expect(val.length).to.equal(expected.length);
+
+            expected.forEach((e, i) => {
+                expect(val[i].status).to.equal(e.status);
+
+                if (e.status == 'fulfilled') {
+                    expect(val[i].value).to.equal(e.value);
+                }
+                else {
+                    expect(val[i].reason).to.equal(e.reason);
+                }
+            });
+        }
+
+        return sweeten.all([
+            // mixed
+            sweeten.allSettled([prom1, prom2, 'x', prom3, prom4, prom5])
+                ((val) => {
+                    cmpSettled(val, [
+                        { status: 'fulfilled', value: 1 },
+                        { status: 'fulfilled', value: 2 },
+                        { status: 'fulfilled', value: 'x' },
+                        { status: 'rejected', reason: 'error' },
+                        { status: 'rejected', reason: 'error4' },
+                        { status: 'fulfilled', value: 5 },
+                    ]);
+                })
+            ,
+
+            // all rejected + value
+            sweeten.allSettled([prom3, prom4, 'x'])
+                ((val) => {
+                    cmpSettled(val, [
+                        { status: 'rejected', reason: 'error' },
+                        { status: 'rejected', reason: 'error4' },
+                        { status: 'fulfilled', value: 'x' },
+                    ]);
+                })
+            ,
+
+            // all rejected
+            sweeten.allSettled([prom3, prom4])
+                ((val) => {
+                    cmpSettled(val, [
+                        { status: 'rejected', reason: 'error' },
+                        { status: 'rejected', reason: 'error4' },
+                    ]);
+                })
+            ,
+
+            // values
+            sweeten.allSettled([1, 2, 'x', '4'])
+                ((val) => {
+                    cmpSettled(val, [
+                        { status: 'fulfilled', value: 1 },
+                        { status: 'fulfilled', value: 2 },
+                        { status: 'fulfilled', value: 'x' },
+                        { status: 'fulfilled', value: '4' },
+                    ]);
+                })
+        ]);
+    });
+
+});
+
 describe('sweeten.defer()', () => {
     it('should create a deferred object with sweeten .promise', () => {
         let deferred = sweeten.defer();
