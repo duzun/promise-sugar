@@ -8,14 +8,14 @@
      *  Promise syntactic sugar - no need to write ".then"
      *
      *  @license MIT
-     *  @version 2.3.0
+     *  @version 2.3.1
      *  @git https://github.com/duzun/promise-sugar
      *  @umd AMD, Browser, CommonJs
      *  @author Dumitru Uzun (DUzun.Me)
      */
 
     /*globals globalThis, window, global, self */
-    var VERSION = '2.3.0'; // -------------------------------------------------------------
+    var VERSION = '2.3.1'; // -------------------------------------------------------------
 
     var nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise; // -------------------------------------------------------------
 
@@ -183,21 +183,22 @@
     };
 
     sweeten.allSettled = function allSettled(val) {
-      var prom = nativePromise.allSettled ? nativePromise.allSettled(val) : function (promises) {
-        return nativePromise.all(promises.map(function (p) {
-          return p.then(function (value) {
-            return {
-              status: 'fulfilled',
-              value: value
-            };
-          }, function (reason) {
-            return {
-              status: 'rejected',
-              reason: reason
-            };
-          });
-        }));
-      };
+      var prom = nativePromise.allSettled ? nativePromise.allSettled(val) : nativePromise.all(val.map(function (value) {
+        return !isThenable(value) ? {
+          status: 'fulfilled',
+          value: value
+        } : value.then(function (value) {
+          return {
+            status: 'fulfilled',
+            value: value
+          };
+        }, function (reason) {
+          return {
+            status: 'rejected',
+            reason: reason
+          };
+        });
+      }));
       return sweeten(prom);
     };
     /**
