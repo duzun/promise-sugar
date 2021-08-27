@@ -21,24 +21,22 @@ into this
 sweeten(10)
 ((n) => n / 2)
 ((n) => n * 3)
-(log, logError) // -> 15
-(null, logError) // .catch
+(log) // -> 15
+(null, logError) // or .catch(logError)
 ```
 
 2 ) and this
 
 ```js
 // Given two existing promises A and B
-A
-.then(() => B) // wait for A and B and return B's value
-.then(log) // -> B's value
+// wait for A and B and return B's value
+log(await A.then(() => B)) // -> B's value
 ```
 
 into this
 
 ```js
-A(B)
-(log) // -> B's value
+log(await A(B)) // -> B's value
 ```
 
 where
@@ -49,6 +47,9 @@ const logError = console.error.bind(console);
 ```
 
 That's almost it! For [**More sugar**](#more-sugar) see below.
+
+A sweeten promise is still a thenable.
+Thus you can still `await` for it, or you could swap the `Promise` with the `sweeten` version in your old code and it should still work the same.
 
 **Promise-sugar** tries to preserve all other behaviors of the `Promise` library used.
 
