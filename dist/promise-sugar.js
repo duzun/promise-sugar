@@ -8,14 +8,14 @@
      *  Promise syntactic sugar - no need to write ".then"
      *
      *  @license MIT
-     *  @version 2.3.1
+     *  @version 2.3.2
      *  @git https://github.com/duzun/promise-sugar
      *  @umd AMD, Browser, CommonJs
      *  @author Dumitru Uzun (DUzun.Me)
      */
 
     /*globals globalThis, window, global, self */
-    var VERSION = '2.3.1'; // -------------------------------------------------------------
+    var VERSION = '2.3.2'; // -------------------------------------------------------------
 
     var nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise; // -------------------------------------------------------------
 
@@ -286,15 +286,15 @@
       };
     }
 
-    function nWait(timeout) {
+    function nWait(timeout, arg) {
       var stop;
       var waiter = new nativePromise(function (resolve, reject) {
-        var id = setTimeout(resolve, timeout);
+        var id = setTimeout(resolve, timeout, arg);
 
         stop = function stop(execute) {
           if (id) {
             clearTimeout(id);
-            execute ? resolve(id) : reject(id);
+            execute ? resolve(arg) : reject(new Error('canceled'));
             id = undefined;
           }
 
@@ -305,8 +305,8 @@
       return waiter;
     }
 
-    function wait(timeout) {
-      var waiter = nWait(timeout);
+    function wait(timeout, arg) {
+      var waiter = nWait(timeout, arg);
       var _waiter2 = waiter,
           stop = _waiter2.stop;
       waiter = sweeten(waiter);
