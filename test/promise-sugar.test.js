@@ -70,6 +70,15 @@ describe('sweeten(promise)', () => {
                     expect(true).to.be.false; // never gets here
                 });
             })
+            (() => {
+                // While here, let's make sure the second argument of wait is passed as resolved value
+                let prom = sweeten.wait(1, 1234);
+                return prom((val) => {
+                    expect(val).to.equal(1234);  // timeout - no promise value!
+                }, () => {
+                    expect(true).to.be.false; // never gets here
+                });
+            })
             ;
     });
 });

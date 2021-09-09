@@ -2,7 +2,7 @@
  *  Promise syntactic sugar - no need to write ".then"
  *
  *  @license MIT
- *  @version 2.3.1
+ *  @version 2.3.2
  *  @git https://github.com/duzun/promise-sugar
  *  @umd AMD, Browser, CommonJs
  *  @author Dumitru Uzun (DUzun.Me)
@@ -10,7 +10,7 @@
 
 /*globals globalThis, window, global, self */
 
-const VERSION = '2.3.1';
+const VERSION = '2.3.2';
 
 // -------------------------------------------------------------
 let nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise;
@@ -248,14 +248,14 @@ function fn(fn, ctx) {
         ;
 }
 
-function nWait(timeout) {
+function nWait(timeout, arg) {
     var stop;
     const waiter = new nativePromise((resolve, reject) => {
-        let id = setTimeout(resolve, timeout);
+        let id = setTimeout(resolve, timeout, arg);
         stop = (execute) => {
             if(id) {
                 clearTimeout(id);
-                execute ? resolve(id) : reject(id);
+                execute ? resolve(arg) : reject(new Error('canceled'));
                 id = undefined;
             }
             return waiter;
@@ -265,8 +265,8 @@ function nWait(timeout) {
     return waiter;
 }
 
-function wait(timeout) {
-    let waiter = nWait(timeout);
+function wait(timeout, arg) {
+    let waiter = nWait(timeout, arg);
     const { stop } = waiter;
     waiter = sweeten(waiter);
     waiter.stop = stop;
