@@ -101,16 +101,6 @@ describe('sweeten.reject(value)', () => {
 });
 
 describe('sweeten.any(array)', () => {
-    let prom1 = Promise.resolve(1);
-    let prom2 = sweeten(2);
-    let prom3 = sweeten.reject('error');
-    let prom4 = sweeten.wait(31)(() => { throw 'error4'; });
-    let prom5 = sweeten.wait(48)(() => 5);
-
-    // suppress UnhandledPromiseRejectionWarning
-    prom3.catch(noop);
-    prom4.catch(noop);
-
     // We want to test the polyfilled version of any
     let _any;
     beforeEach(() => {
@@ -123,6 +113,16 @@ describe('sweeten.any(array)', () => {
     });
 
     it('should resolve with the first promise/value', () => {
+        let prom1 = Promise.resolve(1);
+        let prom2 = sweeten(2);
+        let prom3 = sweeten.reject('error');
+        let prom4 = sweeten.wait(31)(() => { throw 'error4'; });
+        let prom5 = sweeten.wait(48)(() => 5);
+
+        // suppress UnhandledPromiseRejectionWarning
+        prom3.catch(noop);
+        prom4.catch(noop);
+
         return sweeten.all([
             sweeten.any([prom1, prom2, prom3, prom4, prom5])
                 ((val) => {
@@ -155,6 +155,13 @@ describe('sweeten.any(array)', () => {
     });
 
     it('should reject when all promises reject', () => {
+        let prom3 = sweeten.reject('error');
+        let prom4 = sweeten.wait(31)(() => { throw 'error4'; });
+
+        // suppress UnhandledPromiseRejectionWarning
+        prom3.catch(noop);
+        prom4.catch(noop);
+
         return sweeten.all([
             sweeten.any([prom3, prom4])
                 (() => {
