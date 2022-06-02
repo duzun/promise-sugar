@@ -8,14 +8,14 @@
      *  Promise syntactic sugar - no need to write ".then"
      *
      *  @license MIT
-     *  @version 2.3.2
+     *  @version 2.3.3
      *  @git https://github.com/duzun/promise-sugar
      *  @umd AMD, Browser, CommonJs
      *  @author Dumitru Uzun (DUzun.Me)
      */
 
     /*globals globalThis, window, global, self */
-    var VERSION = '2.3.2'; // -------------------------------------------------------------
+    var VERSION = '2.3.3'; // -------------------------------------------------------------
 
     var nativePromise = typeof Promise != 'undefined' ? Promise : (typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}).Promise; // -------------------------------------------------------------
 
@@ -160,10 +160,16 @@
           errors.push(error);
 
           if (! --count) {
-            var _error = new (typeof AggregateError == 'undefined' ? Error : AggregateError)('All promises rejected');
+            var _error;
 
-            _error.name = 'AggregateError';
-            _error.errors = errors;
+            if (typeof AggregateError == 'undefined') {
+              _error = new Error('All promises rejected');
+              _error.name = 'AggregateError';
+              _error.errors = errors;
+            } else {
+              _error = new AggregateError([errors], 'All promises rejected');
+            }
+
             reject(_error);
           }
         }
